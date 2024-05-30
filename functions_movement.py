@@ -1,26 +1,21 @@
 import mediapipe 
 import pyautogui
-
+import time
 
 def calculate_distance(point1, point2):
     return math.sqrt((point1.x - point2.x)**2 + (point1.y - point2.y)**2 + (point1.z - point2.z)**2)
 
-########pausaa##############
-def is_pause(hand_landmarks, image_width, image_height):# function for putting the game in pause
-    
-    thumb_tip = hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_TIP]
-    pinky_tip=hand_landmarks.landmark[mp_hands.HandLandmark.PINKY_TIP]
-
-    return calculate_distance(thumb_tip, pinky_tip)<0.05
+# function for putting the game in pause
+def is_pause(fingertips):
+    return calculate_distance(fingertips[0], fingertips[4])<0.05
 
 #function for verifiying if there is a click
-def is_click(prev_index_y, index_y, click_threshold,last_click_time,click_cooldown):
-  current_time = time.time()
-  if prev_index_y is not None:
-      if (prev_index_y - index_y > click_threshold) and (
-              current_time - last_click_time > click_cooldown):
-          last_click_time = current_time
-          cv2.putText(image, "Clic!", (10, 70), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+def is_click(fingertips, click_threshold, last_click_time, click_cooldown):
+    current_time = time.time()
+    if calculate_distance(fingertips[0], fingertips[1])<0.05 and (current_time - last_click_time>click_cooldown): #se le due dita si toccano ed è passato almeno un secondo allora fai click
+        last_click_time = current_time #aggiorna il last_click_time
+        return True
+    return False
 
 #function for moving mouse
 def move_mouse():
