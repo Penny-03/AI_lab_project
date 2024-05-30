@@ -1,19 +1,17 @@
 import mediapipe 
 import pyautogui
 
-# function for putting the game in pause
-def is_pause(hand_landmarks, image_width, image_height):
+
+def calculate_distance(point1, point2):
+    return math.sqrt((point1.x - point2.x)**2 + (point1.y - point2.y)**2 + (point1.z - point2.z)**2)
+
+########pausaa##############
+def is_pause(hand_landmarks, image_width, image_height):# function for putting the game in pause
+    
     thumb_tip = hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_TIP]
-    index_tip = hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP]
-    middle_tip = hand_landmarks.landmark[mp_hands.HandLandmark.MIDDLE_FINGER_TIP]
+    pinky_tip=hand_landmarks.landmark[mp_hands.HandLandmark.PINKY_TIP]
 
-    # Calcola le coordinate del centro tra medio e indice
-    center_x = (index_tip.x + middle_tip.x) / 2 * image_width
-    center_y = (index_tip.y + middle_tip.y) / 2 * image_height
-
-    # Verifica se il pollice tocca il centro calcolato
-    return (abs(thumb_tip.x * image_width - center_x) < 0.05 * image_width and abs(
-        thumb_tip.y * image_height - center_y) < 0.05 * image_height) and len(results.multi_hand_landmarks) == 2
+    return calculate_distance(thumb_tip, pinky_tip)<0.05
 
 #function for verifiying if there is a click
 def is_click(prev_index_y, index_y, click_threshold,last_click_time,click_cooldown):
