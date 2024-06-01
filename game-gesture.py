@@ -5,6 +5,7 @@ import keyboard
 import threading
 import subprocess
 from functions_movement import *
+import pygetwindow as gw
 
 # Inizializza Mediapipe Hands e le utilità di disegno
 mp_hands = mp.solutions.hands
@@ -24,7 +25,6 @@ pause = False  # utilizzata per mettere il gioco in pausa
 mouse = False #utlizzata per mettere il gioco in modalità mouse
 clicking = False #utilizzata per vedere se si sta cliccando
 
-
 # Funzione per inviare comandi al gioco 2048
 def send_direction_command(direction):
     if direction == "Right":
@@ -35,6 +35,10 @@ def send_direction_command(direction):
         keyboard.press_and_release('w')
     elif direction == "Down":
         keyboard.press_and_release('s')
+    elif direction == "Yes":
+        keyboard.press_and_release('y')
+    elif direction == "No":
+        keyboard.press_and_release('n')
 
 
 # Imposta la webcam
@@ -50,9 +54,16 @@ def start_game():
 game_thread = threading.Thread(target=start_game)
 game_thread.start()
 
+#sleeps so the game has time to start and then moves the window to a certain spot on the screen
+cv2.namedWindow('Hand Tracking', cv2.WINDOW_NORMAL)
+time.sleep(2)
+game_window = gw.getWindowsWithTitle('2048')[0]
+game_window.resizeTo(500, 800)
+game_window.moveTo(1152, 100)
+
 # Usa Hands di Mediapipe
 with mp_hands.Hands(
-        static_image_mode=False,  # per far si che fnzioni in live stream
+        static_image_mode=False,  # per far si che funzioni in live stream
         max_num_hands=1,
         min_detection_confidence=0.5,
         min_tracking_confidence=0.5) as hands:
@@ -115,6 +126,9 @@ with mp_hands.Hands(
                         else:
                             direction_y = "Still"
 
+                        # calling function to determine the ending movement meaning
+                        gesture = end_game_movement(finger_tips)
+
                         # Mostra su schermo la direzione del movimento
                         direction = f"Horizontal: {direction_x}, Vertical: {direction_y}"
                         cv2.putText(image, direction, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (144, 66, 245), 2)
@@ -124,6 +138,8 @@ with mp_hands.Hands(
                             send_direction_command(direction_x)
                         if direction_y != "Still":
                             send_direction_command(direction_y)
+                        if gesture != "Unknown":
+                            send_direction_command(gesture)
 
                     # Aggiorna le posizioni precedenti
                     prev_finger_x = avg_x
@@ -141,6 +157,16 @@ with mp_hands.Hands(
 
         # Mostra l'immagine con i punti di riferimento delle mani e la direzione del movimento
         cv2.imshow('Hand Tracking', image)
+
+        #getting the original size of videocapture and then resizing the window by a scaling factor
+        original_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        original_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+
+        new_height = int(original_height * 3)
+        new_width = int(original_width * 3)
+        
+        cv2.moveWindow('Hand Tracking', 0, 0)
+        cv2.resizeWindow('Hand Tracking', new_width, new_height)
 
         if cv2.waitKey(5) & 0xFF == 27:  # premi esc per chiudere
             break
