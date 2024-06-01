@@ -6,6 +6,8 @@ import math
 def calculate_distance(point1, point2):
     return math.sqrt((point1.x - point2.x) ** 2 + (point1.y - point2.y) ** 2 + (point1.z - point2.z) ** 2)
 
+def calculate_position(point1, point2):
+    return point1.y - point2.y
 
 # FUNZIONE PER LA PAUSA DEL GIOCO
 # il gioco è in pausa se pollice e mignolo si toccano
@@ -52,7 +54,7 @@ def move_mouse(image, finger_tips, click_threshold, last_click_time, click_coold
 
 #funzione per muovere oggetti sullo schermo
 def click_move(finger_tips,clicking,image):
-    if calculate_distance(finger_tips[0],finger_tips[3])<0.04:
+    if calculate_distance(finger_tips[0],finger_tips[3])<0.05:
         cv2.putText(image, "HOLDING", (10, 110), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 73, 255), 2)
         if not clicking:
             clicking = True
@@ -66,3 +68,13 @@ def click_move(finger_tips,clicking,image):
             clicking = False
             pyautogui.mouseUp(button='left')
     return clicking
+
+
+# function to determine whether the ending movement indicates a yes or a no
+def end_game_movement(finger_tips):
+    if calculate_distance(finger_tips[0], finger_tips[4]) < 0.05: #if thumb and pinky touch then restart the game
+        return "Yes"
+    if calculate_distance(finger_tips[0],finger_tips[1]) < 0.05: #if thumb and index touch then quit the game
+        return "No"
+    else:
+        return "Unknown"
