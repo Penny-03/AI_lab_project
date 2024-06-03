@@ -4,19 +4,17 @@ import sys
 import pygame
 from pygame.locals import *
 
-import window_init
+from game_2048 import window_init
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
-
-
-
 
 
 class Button():
     """
     Class to create a new button in pygame window.
     """
+
     # initialise the button
     def __init__(self, colour, x, y, width, height, text=""):
         self.colour = colour
@@ -33,8 +31,8 @@ class Button():
 
         if self.text != "":
             text = font.render(self.text, 1, text_col)
-            win.blit(text, (self.x + (self.width/2 - text.get_width()/2),
-                            self.y + (self.height/2 - text.get_height()/2)))
+            win.blit(text, (self.x + (self.width / 2 - text.get_width() / 2),
+                            self.y + (self.height / 2 - text.get_height() / 2)))
 
     # check if the mouse is positioned over the button
     def isOver(self, pos):
@@ -67,7 +65,7 @@ def drawRoundRect(surface, colour, rect, radius=0.4):
     circle = pygame.Surface([min(rect.size) * 3] * 2, SRCALPHA)
     pygame.draw.ellipse(circle, BLACK, circle.get_rect(), 0)
     circle = pygame.transform.smoothscale(
-        circle, [int(min(rect.size)*radius)]*2)
+        circle, [int(min(rect.size) * radius)] * 2)
 
     radius = rectangle.blit(circle, (0, 0))
     radius.bottomright = rect.bottomright
@@ -93,20 +91,20 @@ def showMenu():
     """
     # create light theme button
     light_theme = Button(
-        tuple(c["colour"]["light"]["2048"]), 200-70, 275, 45, 45, "light")
+        tuple(c["colour"]["light"]["2048"]), 200 - 70, 275, 45, 45, "light")
     # create dark theme button
     dark_theme = Button(
-        tuple(c["colour"]["dark"]["2048"]), 270-70, 275, 45, 45, "dark")
-    
+        tuple(c["colour"]["dark"]["2048"]), 270 - 70, 275, 45, 45, "dark")
+
     # initialise theme
     theme = ""
     theme_selected = False
-    
+
     # create difficulty buttons
     _2048 = Button(tuple(c["colour"]["light"]["64"]),
-                  130, 330, 45, 45, "2048")
+                   130, 330, 45, 45, "2048")
     _1024 = Button(tuple(c["colour"]["light"]["2048"]),
-                  200, 330, 45, 45, "1024")
+                   200, 330, 45, 45, "1024")
     _512 = Button(tuple(c["colour"]["light"]["2048"]),
                   270, 330, 45, 45, "512")
     _256 = Button(tuple(c["colour"]["light"]["2048"]),
@@ -115,14 +113,14 @@ def showMenu():
     # default difficulty
     difficulty = 0
     diff_selected = False
-    
+
     # create play button
     play = Button(tuple(c["colour"]["light"]["2048"]),
                   235, 400, 45, 45, "play")
-    
-    #create instuction button
-    instruction= Button(tuple(c["colour"]["light"]["2048"]),
-                        305,400,45,45,"rules")
+
+    # create instuction button
+    instruction = Button(tuple(c["colour"]["light"]["2048"]),
+                         305, 400, 45, 45, "rules")
 
     # pygame loop for start screen
     while True:
@@ -161,7 +159,7 @@ def showMenu():
 
             if event.type == QUIT or \
                     (event.type == pygame.KEYDOWN and event.key == K_q):
-                # exit if q is pressed 
+                # exit if q is pressed
                 pygame.quit()
                 sys.exit()
 
@@ -180,7 +178,7 @@ def showMenu():
                     light_theme.colour = tuple(c["colour"]["light"]["2048"])
                     theme = "dark"
                     theme_selected = True
-                
+
                 if _2048.isOver(pos):
                     _2048.colour = tuple(c["colour"]["light"]["64"])
                     _1024.colour = tuple(c["colour"]["light"]["2048"])
@@ -188,7 +186,7 @@ def showMenu():
                     _256.colour = tuple(c["colour"]["light"]["2048"])
                     difficulty = 2048
                     diff_selected = True
-                
+
                 if _1024.isOver(pos):
                     _1024.colour = tuple(c["colour"]["light"]["64"])
                     _2048.colour = tuple(c["colour"]["light"]["2048"])
@@ -196,7 +194,7 @@ def showMenu():
                     _256.colour = tuple(c["colour"]["light"]["2048"])
                     difficulty = 1024
                     diff_selected = True
-                
+
                 if _512.isOver(pos):
                     _512.colour = tuple(c["colour"]["light"]["64"])
                     _1024.colour = tuple(c["colour"]["light"]["2048"])
@@ -204,7 +202,7 @@ def showMenu():
                     _256.colour = tuple(c["colour"]["light"]["2048"])
                     difficulty = 512
                     diff_selected = True
-                
+
                 if _256.isOver(pos):
                     _256.colour = tuple(c["colour"]["light"]["64"])
                     _1024.colour = tuple(c["colour"]["light"]["2048"])
@@ -218,19 +216,18 @@ def showMenu():
                     if theme != "" and difficulty != 0:
                         playGame(theme, difficulty)
 
-                #open the rules if rules is clicked
+                # open the rules if rules is clicked
                 if instruction.isOver(pos):
                     window_init.create_instruction_window()
 
                 # reset theme & diff choice if area outside buttons is clicked
                 if not play.isOver(pos) and \
-                    not dark_theme.isOver(pos) and \
-                    not light_theme.isOver(pos) and \
-                    not _2048.isOver(pos) and \
-                    not _1024.isOver(pos) and \
-                    not _512.isOver(pos) and \
-                    not _256.isOver(pos):
-
+                        not dark_theme.isOver(pos) and \
+                        not light_theme.isOver(pos) and \
+                        not _2048.isOver(pos) and \
+                        not _1024.isOver(pos) and \
+                        not _512.isOver(pos) and \
+                        not _256.isOver(pos):
                     theme = ""
                     theme_selected = False
                     diff_selected = False
@@ -241,7 +238,6 @@ def showMenu():
                     _1024.colour = tuple(c["colour"]["light"]["2048"])
                     _512.colour = tuple(c["colour"]["light"]["2048"])
                     _256.colour = tuple(c["colour"]["light"]["2048"])
-                    
 
             # change colour on hovering over buttons
             if event.type == pygame.MOUSEMOTION:
@@ -250,44 +246,44 @@ def showMenu():
                         light_theme.colour = tuple(c["colour"]["light"]["64"])
                     else:
                         light_theme.colour = tuple(c["colour"]["light"]["2048"])
-                    
+
                     if dark_theme.isOver(pos):
                         dark_theme.colour = tuple(c["colour"]["dark"]["background"])
                     else:
                         dark_theme.colour = tuple(c["colour"]["dark"]["2048"])
-                
+
                 if not diff_selected:
                     if _2048.isOver(pos):
                         _2048.colour = tuple(c["colour"]["light"]["64"])
                     else:
                         _2048.colour = tuple(c["colour"]["light"]["2048"])
-                    
+
                     if _1024.isOver(pos):
                         _1024.colour = tuple(c["colour"]["light"]["64"])
                     else:
                         _1024.colour = tuple(c["colour"]["light"]["2048"])
-                    
+
                     if _512.isOver(pos):
                         _512.colour = tuple(c["colour"]["light"]["64"])
                     else:
                         _512.colour = tuple(c["colour"]["light"]["2048"])
-                    
+
                     if _256.isOver(pos):
                         _256.colour = tuple(c["colour"]["light"]["64"])
                     else:
                         _256.colour = tuple(c["colour"]["light"]["2048"])
-                
+
                 if play.isOver(pos):
                     play.colour = tuple(c["colour"]["light"]["64"])
                 else:
                     play.colour = tuple(c["colour"]["light"]["2048"])
-                    
+
                 #####
                 if instruction.isOver(pos):
                     instruction.colour = tuple(c["colour"]["light"]["64"])
                 else:
                     instruction.colour = tuple(c["colour"]["light"]["2048"])
-                
+
 
 if __name__ == "__main__":
     # load json data
@@ -304,7 +300,6 @@ if __name__ == "__main__":
     icon = pygame.transform.scale(
         pygame.image.load("game_2048\\images\\icon.ico"), (32, 32))
     pygame.display.set_icon(icon)
-    
 
     # set font according to json data specifications
     my_font = pygame.font.SysFont(c["font"], c["font_size"], bold=True)
