@@ -1,9 +1,9 @@
+import cv2
 import mediapipe as mp
 import keyboard
 import threading
 import subprocess
 from functions_movement import *
-#from game_2048.window_init import *
 import pygetwindow as gw
 
 # Inizializza Mediapipe Hands e le utilità di disegno
@@ -44,7 +44,7 @@ cap = cv2.VideoCapture(0)
 
 # Funzione per avviare il gioco 2048
 def start_game():
-    subprocess.run(["python", "game_2048/main.py"])
+    subprocess.run(["python", "main.py"])
 
 
 # Avvia il gioco 2048 in un thread separato
@@ -53,10 +53,11 @@ game_thread.start()
 
 #sleeps so the game has time to start and then moves the window to a certain spot on the screen
 cv2.namedWindow('Hand Tracking', cv2.WINDOW_NORMAL)
-time.sleep(3)
+time.sleep(2)
 game_window = gw.getWindowsWithTitle('2048')[0]
 game_window.resizeTo(500, 800)
-game_window.moveTo(1152, 100)
+screen_width, screen_height = pyautogui.size()
+game_window.moveTo(screen_width-768, screen_height-1000)
 
 # Usa Hands di Mediapipe
 with mp_hands.Hands(
@@ -126,10 +127,9 @@ with mp_hands.Hands(
                         gesture = end_game_movement(finger_tips)
 
                         # Mostra su schermo la direzione del movimento
-                        direction = f" MOVE: Horizontal: {direction_x}, Vertical: {direction_y}" #############################################################
-                        cv2.putText(image, direction, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (144, 66, 245), 2)
-                        #if game.end:
-                            #pass                                                           ##############display the instructions for ending game
+                        direction = f"MOVE: Horizontal: {direction_x}, Vertical: {direction_y}"
+                        cv2.putText(image, direction, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 73, 255), 2)
+
                         # Invia comando al gioco se c'è un movimento
                         if direction_x != "Still":
                             send_direction_command(direction_x)
@@ -151,19 +151,21 @@ with mp_hands.Hands(
                         click_move(finger_tips,clicking,image)
                         move_mouse(image, finger_tips, click_threshold, last_click_time, click_cooldown)
 
+        # display the instructions for ending the game
+        cv2.rectangle(image, (5,385), (425,470), (66,212,254), -1)
+        cv2.putText(image, 'When you reach the end of the game:', (10, 400),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (108, 108, 108), 1)
+        cv2.putText(image, '- to play again -> touch thumb and index finger', (10, 420),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (108, 108, 108), 1)
+        cv2.putText(image, '- to exit the game -> touch thumb and pinky', (10, 440),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (108, 108, 108), 1)
 
         # Mostra l'immagine con i punti di riferimento delle mani e la direzione del movimento
         cv2.imshow('Hand Tracking', image)
 
-        #getting the original size of videocapture and then resizing the window by a scaling factor
-        original_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-        original_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-
-        new_height = int(original_height * 3)
-        new_width = int(original_width * 3)
-
+        #resizing the window
         cv2.moveWindow('Hand Tracking', 0, 0)
-        cv2.resizeWindow('Hand Tracking', new_width, new_height)
+        cv2.resizeWindow('Hand Tracking', screen_width, screen_height)
 
         if cv2.waitKey(5) & 0xFF == 27:  # premi esc per chiudere
             break
