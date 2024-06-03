@@ -11,9 +11,12 @@ def calculate_position(point1, point2):
 
 # FUNZIONE PER LA PAUSA DEL GIOCO
 # il gioco è in pausa se pollice e mignolo si toccano
-def is_pause(finger_tips):
-    return calculate_distance(finger_tips[0], finger_tips[4]) < 0.05
-
+def is_pause(finger_tips, last_pause):
+    current_time = time.time()
+    if current_time - last_pause  >1.0:
+        last_pause=current_time
+        return calculate_distance(finger_tips[0], finger_tips[4]) < 0.05
+    return False
 
 # FUNZIONE PER IL CLICK
 # Il click viene preso solo quando sei in pausa e pollice e anulare si toccano
@@ -21,15 +24,19 @@ def is_pause(finger_tips):
 def is_click(image, finger_tips, click_threshold, last_click_time, click_cooldown):
     current_time = time.time()
     if calculate_distance(finger_tips[0], finger_tips[3]) < 0.05 and (
-            current_time - last_click_time > click_cooldown):  # se le due dita si toccano ed è passato almeno un secondo allora fai click
+        current_time - last_click_time > click_cooldown):  # se le due dita si toccano ed è passato almeno un secondo allora fai click
         last_click_time = current_time  # aggiorna il last_click_time
         cv2.putText(image, "Click!", (120, 70), cv2.FONT_HERSHEY_SIMPLEX, 1, (207, 242, 102), 2)
         return True
     return False
 
 # function for verifying if we are entering mouse mode
-def is_mouse(finger_tips):
-    return calculate_distance(finger_tips[0], finger_tips[2]) < 0.05
+def is_mouse(finger_tips, last_mouse):
+    current_time = time.time()
+    if current_time - last_mouse  >1.0:
+        last_mouse=current_time
+        return calculate_distance(finger_tips[0], finger_tips[2]) < 0.05
+    return False
 
 # FUNZIONE PER MUOVERE IL CURSORE
 def move_mouse(image, finger_tips, click_threshold, last_click_time, click_cooldown):
