@@ -48,7 +48,7 @@ def move_mouse(image, finger_tips, click_threshold, last_click_time, click_coold
         pyautogui.click()
 
     # Disegna un cerchio sulla punta del dito indice.
-    cv2.circle(image, (cx, cy), 10, (166, 255, 0), -1)
+    cv2.circle(image, (cx, cy), 10, (166, 255, 0), -1) ###################################chenage color
     cv2.putText(image, "MOUSE", (10, 70), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 73, 255), 2)
 
 
@@ -73,8 +73,8 @@ def click_move(finger_tips,clicking,image):
 # function to determine whether the ending movement indicates a yes or a no
 def end_game_movement(finger_tips):
     if calculate_distance(finger_tips[0], finger_tips[4]) < 0.05: #if thumb and pinky touch then restart the game
-        return "Yes"
-    if calculate_distance(finger_tips[0],finger_tips[1]) < 0.05: #if thumb and index touch then quit the game
         return "No"
+    if calculate_distance(finger_tips[0],finger_tips[1]) < 0.05: #if thumb and index touch then quit the game
+        return "Yes"
     else:
         return "Unknown"
