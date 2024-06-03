@@ -11,10 +11,10 @@ def create_instruction_window():
     background[:] = (0,170,255) #BGR
 
     # move the window and put it where needed
-    cv2.moveWindow('Hand 2048 Instructions', 1152, 100)
+    cv2.moveWindow('Hand 2048 Instructions', 570, 40)
 
     # paste on the background the image in the desired position using transformations, bitwise operators and masking like we did in class
-    image = cv2.imread('2048Tiles.png')
+    image = cv2.imread('game_2048\\2048Tiles.png')
     image = cv2.resize(image,None, fx=0.2,fy=0.2)
     img_h, img_w = image.shape[:2]
     src_points=np.array([[0,0],[0,img_h-1],[img_w-1,img_h-1],[img_w-1,0]], dtype=np.float32)
