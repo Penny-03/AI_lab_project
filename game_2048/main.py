@@ -4,7 +4,7 @@ import sys
 import pygame
 from pygame.locals import *
 
-
+import window_init
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -119,6 +119,10 @@ def showMenu():
     # create play button
     play = Button(tuple(c["colour"]["light"]["2048"]),
                   235, 400, 45, 45, "play")
+    
+    #create instuction button
+    instruction= Button(tuple(c["colour"]["light"]["2048"]),
+                        305,400,45,45,"rules")
 
     # pygame loop for start screen
     while True:
@@ -147,6 +151,7 @@ def showMenu():
         _512.draw(screen, BLACK, font2)
         _256.draw(screen, BLACK, font2)
         play.draw(screen, BLACK, font1)
+        instruction.draw(screen, BLACK, font1)
 
         pygame.display.update()
 
@@ -213,6 +218,10 @@ def showMenu():
                     if theme != "" and difficulty != 0:
                         playGame(theme, difficulty)
 
+                #open the rules if rules is clicked
+                if instruction.isOver(pos):
+                    window_init.create_instruction_window()
+
                 # reset theme & diff choice if area outside buttons is clicked
                 if not play.isOver(pos) and \
                     not dark_theme.isOver(pos) and \
@@ -272,6 +281,13 @@ def showMenu():
                     play.colour = tuple(c["colour"]["light"]["64"])
                 else:
                     play.colour = tuple(c["colour"]["light"]["2048"])
+                    
+                #####
+                if instruction.isOver(pos):
+                    instruction.colour = tuple(c["colour"]["light"]["64"])
+                else:
+                    instruction.colour = tuple(c["colour"]["light"]["2048"])
+                
 
 if __name__ == "__main__":
     # load json data
