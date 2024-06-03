@@ -1,10 +1,9 @@
-import cv2
 import mediapipe as mp
-import time
 import keyboard
 import threading
 import subprocess
 from functions_movement import *
+#from game_2048.window_init import *
 import pygetwindow as gw
 
 # Inizializza Mediapipe Hands e le utilità di disegno
@@ -21,7 +20,7 @@ click_threshold = 20  # Soglia per determinare un click
 click_cooldown = 1.0  # Tempo di attesa tra un click e l'altro
 last_click_time = 0
 last_mov_time = 0
-pause = False  # utilizzata per mettere il gioco in pausa
+pause = True  # utilizzata per mettere il gioco in pausa
 mouse = False #utlizzata per mettere il gioco in modalità mouse
 clicking = False #utilizzata per vedere se si sta cliccando
 
@@ -40,10 +39,8 @@ def send_direction_command(direction):
     elif direction == "No":
         keyboard.press_and_release('n')
 
-
 # Imposta la webcam
 cap = cv2.VideoCapture(0)
-
 
 # Funzione per avviare il gioco 2048
 def start_game():
@@ -56,7 +53,7 @@ game_thread.start()
 
 #sleeps so the game has time to start and then moves the window to a certain spot on the screen
 cv2.namedWindow('Hand Tracking', cv2.WINDOW_NORMAL)
-time.sleep(2)
+time.sleep(3)
 game_window = gw.getWindowsWithTitle('2048')[0]
 game_window.resizeTo(500, 800)
 game_window.moveTo(1152, 100)
@@ -76,7 +73,6 @@ with mp_hands.Hands(
         image = cv2.flip(img, 1)
         # Imposta le variabili per il disegno
         results = hands.process(image)
-
         # Controlla se ci sono mani rilevate
         if results.multi_hand_landmarks:
             for hand_landmarks in results.multi_hand_landmarks:
@@ -130,9 +126,10 @@ with mp_hands.Hands(
                         gesture = end_game_movement(finger_tips)
 
                         # Mostra su schermo la direzione del movimento
-                        direction = f"Horizontal: {direction_x}, Vertical: {direction_y}"
+                        direction = f" MOVE: Horizontal: {direction_x}, Vertical: {direction_y}" #############################################################
                         cv2.putText(image, direction, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (144, 66, 245), 2)
-
+                        #if game.end:
+                            #pass                                                           ##############display the instructions for ending game
                         # Invia comando al gioco se c'è un movimento
                         if direction_x != "Still":
                             send_direction_command(direction_x)
@@ -164,7 +161,7 @@ with mp_hands.Hands(
 
         new_height = int(original_height * 3)
         new_width = int(original_width * 3)
-        
+
         cv2.moveWindow('Hand Tracking', 0, 0)
         cv2.resizeWindow('Hand Tracking', new_width, new_height)
 
