@@ -3,11 +3,12 @@ import sys
 import time
 from copy import deepcopy
 
-
 import pygame
 from pygame.locals import *
 
 from logic import *
+
+end = False
 
 # TODO: Add a RULES button on start page
 # TODO: Add score keeping
@@ -47,7 +48,8 @@ def winCheck(board, status, theme, text_col):
             msg = "YOU WIN!"
         else:
             msg = "GAME OVER!"
-
+        ########################################################################################END GAME
+        end = True
         screen.blit(my_font.render(msg, 1, text_col), (140, 180))
         # Ask user to play again
         screen.blit(my_font.render(
@@ -80,6 +82,7 @@ def newGame(theme, text_col):
         board (list): new game board
     """
     # clear the board to start a new game
+    end = False
     board = [[0] * 4 for _ in range(4)]
     display(board, theme)
 
@@ -184,8 +187,8 @@ def playGame(theme, difficulty):
             # a key has been pressed
             if event.type == pygame.KEYDOWN:
                 # 'n' is pressed to restart the game
-                if event.key == pygame.K_n:
-                    board = restart(board, theme, text_col)
+                #if event.key == pygame.K_n: ######################################################
+                    #board = restart(board, theme, text_col)
 
                 if str(event.key) not in c["keys"]:
                     # no direction key was pressed
